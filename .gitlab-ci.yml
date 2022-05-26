@@ -18,7 +18,7 @@ build_arm64v8:
   before_script:
     - docker info
   script:
-    - docker build . -f Dockerfile -t ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH} --build-arg ARCH=${ARCH}
+    - docker build . -f Dockerfile -t ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH} --build-arg ARCH="${ARCH}/"
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker push ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH}
 
@@ -31,7 +31,7 @@ build_amd64:
   before_script:
     - docker info
   script:
-    - docker build . -f Dockerfile -t ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH} --build-arg ARCH=${ARCH}
+    - docker build . -f Dockerfile -t ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH} --build-arg ARCH="${ARCH}/"
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     - docker push ${DOCKER_REGISTRY}/neotrial/docker-events-exporter/docker-events-exporter:${CI_COMMIT_REF_SLUG}-${ARCH}
 

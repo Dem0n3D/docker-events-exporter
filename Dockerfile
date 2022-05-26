@@ -1,6 +1,6 @@
 ARG ARCH
 
-FROM ${ARCH}/python:3.8-alpine
+FROM ${ARCH}python:3.8-alpine
 
 WORKDIR /var
 
