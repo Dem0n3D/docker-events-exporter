@@ -1,5 +1,6 @@
 import datetime
 import docker
+import queue
 import os
 import threading
 import time
@@ -40,6 +41,8 @@ docker_services_state = Enum('docker_swarm_service_task_state',
                                  # 'ready',
                              ])
 
+exc_q = queue.Queue()
+
 
 def watch_docker_events():
     for event in docker_client.events(decode=True):
@@ -75,9 +78,20 @@ def watch_swarm_events():
         time.sleep(int(os.getenv('SWARM_INTERVAL_SECONDS', 10)))
 
 
+def thread_exc_wrapper(f):
+    def wrapper():
+        try:
+            f()
+        except Exception as e:
+            exc_q.put(e)
+
+    return wrapper
+
+
 if __name__ == '__main__':
     port = int(os.getenv('PROMETHEUS_PORT', 9000))
     print(f'Start prometheus client on port {port}')
     start_http_server(port, addr=os.getenv('PROMETHEUS_LISTEN_ADDRESS', '0.0.0.0'))
-    threading.Thread(target=watch_swarm_events, daemon=True).start()
-    watch_docker_events()
+    threading.Thread(target=thread_exc_wrapper(watch_swarm_events), daemon=True).start()
+    threading.Thread(target=thread_exc_wrapper(watch_docker_events), daemon=True).start()
+    raise exc_q.get(True)
